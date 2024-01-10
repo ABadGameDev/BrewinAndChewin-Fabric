@@ -4,6 +4,7 @@ import com.nhoryzon.mc.farmersdelight.item.ConsumableItem;
 import dev.sterner.brewinandchewin.BrewinAndChewin;
 import dev.sterner.brewinandchewin.common.block.*;
 import dev.sterner.brewinandchewin.common.item.BoozeBlockItem;
+import dev.sterner.brewinandchewin.common.item.DreadNogBlockItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
@@ -55,7 +56,7 @@ public interface BCObjects {
     Item SACCHARINE_RUM = register("saccharine_rum", new BoozeBlockItem(TANKARD_BLOCK, 2, 8, drinkItem().food(BCFoodComponents.SACCHARINE_RUM)));
     Item PALE_JANE = register("pale_jane", new BoozeBlockItem(TANKARD_BLOCK, 2, 5, drinkItem().food(BCFoodComponents.PALE_JANE)));
 
-    Item DREAD_NOG = register("dread_nog", new BoozeBlockItem(TANKARD_BLOCK, 3, 5, drinkItem()));
+    Item DREAD_NOG = register("dread_nog", new DreadNogBlockItem(TANKARD_BLOCK, 3, 5, drinkItem()));
 
     Item SALTY_FOLLY = register("salty_folly", new BoozeBlockItem(TANKARD_BLOCK, 2, 10, drinkItem().food(BCFoodComponents.SALTY_FOLLY)));
     Item STEEL_TOE_STOUT = register("steel_toe_stout", new BoozeBlockItem(TANKARD_BLOCK, 3, 10, drinkItem().food(BCFoodComponents.STEEL_TOE_STOUT)));

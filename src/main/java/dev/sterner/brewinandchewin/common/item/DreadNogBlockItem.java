@@ -1,15 +1,17 @@
 package dev.sterner.brewinandchewin.common.item;
 
 import dev.sterner.brewinandchewin.common.registry.BCStatusEffects;
+import net.minecraft.block.Block;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
-public class DreadNogItem extends BoozeItem {
-    public DreadNogItem(int potency, int duration, Settings settings) {
-        super(potency, duration, settings);
+public class DreadNogBlockItem extends BoozeBlockItem {
+    public DreadNogBlockItem(Block block, int potency, int duration, Settings settings) {
+        super(block, potency, duration, settings);
     }
 
     @Override
