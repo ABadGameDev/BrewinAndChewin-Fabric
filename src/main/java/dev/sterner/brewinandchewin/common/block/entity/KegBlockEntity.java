@@ -27,6 +27,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -339,6 +340,16 @@ public class KegBlockEntity extends SyncedBlockEntity implements KegBlockInvento
         }
     }
 
+    private void handleFluidStack(ItemStack fluidStack) {
+        if (KegRecipe.isEmptyOrFiller(fluidStack)) //Don't decrement a filler item, keep it there
+            return;
+        if (fluidStack.getCount() == 1) {
+            this.setStack(4, ItemStack.EMPTY);
+        } else {
+            this.setStack(4, new ItemStack(fluidStack.getItem(), fluidStack.getCount() - 1));
+        }
+    }
+
     private boolean processFermenting(KegRecipe recipe, KegBlockEntity keg) {
         if (this.world == null) {
             return false;
@@ -362,19 +373,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements KegBlockInvento
                 ItemStack fluidStack = this.getStack(4);
                 if (storedContainers.isEmpty()) {
                     this.setStack(8, fluidStack.copy().getRecipeRemainder());
-                    if (fluidStack.getCount() == 1) {
-                        this.setStack(4, ItemStack.EMPTY);
-                    } else {
-                        this.setStack(4, new ItemStack(fluidStack.getItem(), fluidStack.getCount() - 1));
-                    }
                 } else if (ItemStack.areItemsEqual(storedContainers, this.getStack(4).getRecipeRemainder())) {
                     storedContainers.increment(resultStack.getCount());
-                    if (fluidStack.getCount() == 1) {
-                        this.setStack(4, ItemStack.EMPTY);
-                    } else {
-                        this.setStack(4, new ItemStack(fluidStack.getItem(), fluidStack.getCount() - 1));
-                    }
                 }
+                handleFluidStack(fluidStack);
 
                 keg.setLastRecipe(recipe);
 
@@ -391,7 +393,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements KegBlockInvento
                         world.spawnEntity(entity);
                     }
 
-                    if (!slotStack.isEmpty()) {
+                    if (!KegRecipe.isEmptyOrFiller(slotStack)) {
                         slotStack.decrement(1);
                     }
                 }

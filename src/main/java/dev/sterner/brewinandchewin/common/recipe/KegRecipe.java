@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.nhoryzon.mc.farmersdelight.util.RecipeMatcher;
 import dev.sterner.brewinandchewin.common.registry.BCRecipeTypes;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -14,6 +15,8 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
@@ -21,6 +24,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class KegRecipe implements Recipe<Inventory> {
     public static final int INPUT_SLOTS = 4;
@@ -65,6 +69,13 @@ public class KegRecipe implements Recipe<Inventory> {
         return ingredients;
     }
 
+    public static boolean isEmptyOrFiller(ItemStack itemStack) {
+        return itemStack.isEmpty() || itemStack.streamTags().anyMatch(itemTagKey -> itemTagKey == ItemTags.PLANKS);
+    }
+    public static boolean isEmptyOrFiller(Ingredient ingredient) {
+        return ingredient.isEmpty() || ingredient.getMatchingStacks().length == 0 || isEmptyOrFiller(ingredient.getMatchingStacks()[0]);
+    }
+
     @Override
     public boolean matches(Inventory inventory, World world) {
         List<ItemStack> inputs = new ArrayList();
@@ -72,13 +83,13 @@ public class KegRecipe implements Recipe<Inventory> {
 
         for (int j = 0; j < 4; ++j) {
             ItemStack itemstack = inventory.getStack(j);
-            if (!itemstack.isEmpty()) {
+            if (!isEmptyOrFiller(itemstack)) {
                 ++i;
                 inputs.add(itemstack);
             }
         }
 
-        if (this.fluidItem != null) {
+        if (this.fluidItem != null && !isEmptyOrFiller(this.fluidItem)) {
             return i == this.ingredientList.size() && RecipeMatcher.findMatches(inputs, this.ingredientList) != null && this.fluidItem.test(inventory.getStack(4));
         } else {
             return i == this.ingredientList.size() && RecipeMatcher.findMatches(inputs, this.ingredientList) != null;
